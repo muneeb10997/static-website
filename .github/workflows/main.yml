@@ -27,3 +27,6 @@ jobs:
     - name: Sync files to S3 bucket
       run: |
         aws s3 sync . s3://static-web1-bucket --delete --exclude ".git/*" --exclude ".github/*"
+    - name: Invalidate CloudFront cache
+      run: |
+        aws cloudfront create-invalidation --distribution-id E3N0L3TXIP1ZUM --paths "/index.html"
