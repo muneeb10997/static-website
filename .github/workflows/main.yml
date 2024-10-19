@@ -1,0 +1,29 @@
+name: Deploy to S3
+
+on:
+  push:
+    branches:
+      - main  # Run this workflow when pushing to the main branch
+
+permissions:
+  id-token: write  # Allows OIDC token usage
+  contents: read   # Allows reading the repo content
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      id: aws-creds
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        role-to-assume: arn:aws:iam::430118843901:role/GitHubActionsS3DeploymentRole
+        aws-region: us-east-2
+
+    - name: Sync files to S3 bucket
+      run: |
+        aws s3 sync . s3://static-web1-bucket --delete
